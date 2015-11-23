@@ -25,6 +25,9 @@ msg/_*.py
 .project
 .cproject
 
+# Vim stuff
+.ycm_extra_conf.py
+
 # qcreator stuff
 CMakeLists.txt.user
 
