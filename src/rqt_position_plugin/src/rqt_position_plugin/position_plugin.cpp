@@ -3,23 +3,13 @@
  * This plugin allows GPS tracking using a ROS NavSatFix message.
  * 
  * @TODO 
- * Allow entry of GPS coordinates
  * Connect entered coordinates and GPS Position with a line
- * Display list of entered coordinates
  * Editing of entered coordinates
  **********************************************************************************************************************/
 
 // QT Includes
 #include <QApplication>
-#include <QDebug>
-#include <QHash>
-#include <QLabel>
-#include <qmath.h>
-#include <QModelIndex>
-#include <QThread>
-#include <QTimer>
 #include <QStandardItemModel>
-#include <QVBoxLayout>
 
 // Marble Includes
 #include <marble/GeoDataDocument.h>
@@ -48,6 +38,31 @@ PositionPlugin::PositionPlugin()
 {
   // name QObjects
   setObjectName("PositionPlugin");
+}
+
+/***********************************************************************************************************************
+ * This function is called when the user clicks plot. Creates the
+ * objects for the waypoint and adds to appropriate data structs.
+ *
+ * @AUTHOR Robert Hamilton
+ **********************************************************************************************************************/
+void PositionPlugin::addWaypoint()
+{
+  Marble::GeoDataPlacemark* tmp_placemark = new Marble::GeoDataPlacemark;
+  tmp_placemark->setName(ui_.lineEdit_name->text());
+  
+  float lon = ui_.lineEdit_lon->text().toFloat();
+  float lat = ui_.lineEdit_lat->text().toFloat();
+
+  tmp_placemark->setCoordinate(lat, lon, 0, Marble::GeoDataCoordinates::Degree);
+
+  Marble::GeoDataDocument* tmp_doc = new Marble::GeoDataDocument;
+	tmp_doc->append(tmp_placemark);
+  ui_.MarbleWidget->model()->treeModel()->addDocument(tmp_doc);
+
+	waypoints.push_back(tmp_placemark);	
+	plotWaypoint();
+  waypointsToList();
 }
 
 /***********************************************************************************************************************
@@ -84,6 +99,10 @@ void PositionPlugin::changeMarbleTheme(int idx )
   QString theme = model->data( index , Qt::UserRole+1  ).toString();
 
   ui_.MarbleWidget->setMapThemeId( theme );
+}
+
+void PositionPlugin::drawLines()
+{
 }
 
 /***********************************************************************************************************************
@@ -123,11 +142,6 @@ void PositionPlugin::findNavSatFixTopics()
  **********************************************************************************************************************/
 void PositionPlugin::GPSCallback(const sensor_msgs::NavSatFixConstPtr& gps_ptr)
 {
- /* 
-  * Trying to directly set the placemark coordinates or calling the 
-  * setTrackerCoordinates method results in a seg fault therefore
-  * a QT S/S connection is REQUIRED.
-  */
   Marble::GeoDataCoordinates coord(Marble::GeoDataCoordinates( gps_ptr->longitude, gps_ptr->latitude, gps_ptr->altitude, Marble::GeoDataCoordinates::Degree));
 
   emit coordinatesChanged(coord);
@@ -159,10 +173,12 @@ void PositionPlugin::initPlugin(qt_gui_cpp::PluginContext& context)
   // Center map to given position
   Marble::GeoDataCoordinates hanksville(-110.7131, 38.3614, 0.0, Marble::GeoDataCoordinates::Degree);
   ui_.MarbleWidget->centerOn(hanksville);
-  ui_.MarbleWidget->setDistance(0.5);
+  ui_.MarbleWidget->setDistance(0.001);
 
   context.addWidget(widget_);
   ui_.comboBox_theme->setModel( m_map_theme_manager.mapThemeModel() );
+  ui_.lineEdit_lon->setValidator(new QDoubleValidator());
+  ui_.lineEdit_lat->setValidator(new QDoubleValidator());
 
   // Create tracker placemark
   m_tracker_placemark = new Marble::GeoDataPlacemark("Rover");
@@ -173,13 +189,14 @@ void PositionPlugin::initPlugin(qt_gui_cpp::PluginContext& context)
   // Initial rover placemark 
   setTrackerCoordinates(hanksville);
 
+
   // Update the position label when the mouse moves
-  connect( ui_.MarbleWidget, SIGNAL( mouseMoveGeoPosition( QString ) ),
-    ui_.label_position, SLOT( setText( QString ) ) );
+  //connect( ui_.MarbleWidget, SIGNAL( mouseMoveGeoPosition( QString ) ),
+  //  ui_.label_position, SLOT( setText( QString ) ) );
 
   // Update GPS Topic on user selection
-  connect( ui_.comboBox_gps, SIGNAL( activated( const QString & ) ),
-    this, SLOT( changeGPSTopic( const QString & ) ) );
+  //connect( ui_.comboBox_gps, SIGNAL( activated( const QString & ) ),
+  //  this, SLOT( changeGPSTopic( const QString & ) ) );
 
   // Refresh GPS Topics on user push
   connect( ui_.pushButton_refresh, SIGNAL( clicked() ),
@@ -193,6 +210,38 @@ void PositionPlugin::initPlugin(qt_gui_cpp::PluginContext& context)
   connect(this, SIGNAL( coordinatesChanged( Marble::GeoDataCoordinates ) ),
     this, SLOT( setTrackerCoordinates( Marble::GeoDataCoordinates ) ),
     Qt::BlockingQueuedConnection);
+
+    // Add waypoint
+    connect(ui_.pushButton_plot, SIGNAL( clicked() ),
+      this, SLOT( addWaypoint() ) );
+}
+
+void PositionPlugin::paintEvent(QPaintEvent *e)
+{
+	Marble::GeoPainter painter(ui_.MarbleWidget, ui_.MarbleWidget->viewport());
+	Marble::GeoDataLineString shapeLatitudeCircle( Marble::RespectLatitudeCircle | Marble::Tessellate );
+  
+  for(std::vector<Marble::GeoDataPlacemark*>::iterator it=waypoints.begin(); it!=waypoints.end(); it++)
+		shapeLatitudeCircle << (*it)->coordinate();
+	
+	painter.setPen(QColor( 255, 0, 0 ));
+	painter.drawPolyline( shapeLatitudeCircle );	
+}
+
+/***********************************************************************************************************************
+ * Update the location of all the waypoints
+ *
+ *
+ * @AUTHOR Robert Hamilton
+ **********************************************************************************************************************/
+void PositionPlugin::plotWaypoint()
+{
+  for(std::vector<Marble::GeoDataPlacemark*>::iterator it=waypoints.begin(); it!=waypoints.end(); it++)
+  {
+  	ui_.MarbleWidget->model()->treeModel()->updateFeature(*it);
+	}	
+
+	ui_.MarbleWidget->update();
 }
 
 /***********************************************************************************************************************
@@ -260,6 +309,16 @@ void triggerConfiguration()
 {
   // Usually used to open a dialog to offer the user a set of configuration
 }*/
+
+void PositionPlugin::waypointsToList()
+{
+  ui_.listWidget_waypoints->clear();
+
+  for(std::vector<Marble::GeoDataPlacemark*>::iterator it=waypoints.begin(); it!=waypoints.end(); it++)
+  {
+		ui_.listWidget_waypoints->addItem((*it)->name());
+	}	
+}
 
 } // namespace
 PLUGINLIB_EXPORT_CLASS(rqt_position_plugin::PositionPlugin , rqt_gui_cpp::Plugin )
