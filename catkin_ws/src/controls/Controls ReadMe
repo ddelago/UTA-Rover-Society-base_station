@@ -1,0 +1,33 @@
+Controls:
+Libraries needed:
+pySerial: 
+- Download the archive from http://pypi.python.org/pypi/pyserial. Unpack 
+  the archive, enter the pyserial-x.y directory.
+- run: python3 setup.py install
+rosjoy:
+- Installation instructions:
+- http://wiki.ros.org/joy/Tutorials/ConfiguringALinuxJoystick
+
+start_controls.launch:
+-Creates nodes: controller_raw, joystick_raw
+-This uses 2 different joy nodes for the 2 controllers and gets 
+ the raw input. 
+-Starts nodes: controller, joystick, serialToArduino
+
+controller.cpp:
+-Creates node : controller
+-Subscribes to: controller_raw
+-Publishes to : cmd_vel, others as needed
+-The drive system is similar to a videogame. Right trigger accelerates,
+ left trigger decelerates, and left stick is steering. 
+
+joystick.cpp:
+-Creates node : joystick
+-Subscribes to: joystick_raw 
+-Publishes to : None Yet, Waiting for IK 
+
+serialToArduino.py:
+-Creates node : serialToArduino
+-Subscribes to: cmd_vel, and others to be sent to arduino
+-Publishes to : None, it writes to serial for arduino
+-Waiting for more topics to subscribe to.
