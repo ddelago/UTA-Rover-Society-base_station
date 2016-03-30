@@ -196,7 +196,3 @@ target_link_libraries(controller ${catkin_LIBRARIES})
 
 add_executable(joystick src/joystick.cpp)
 target_link_libraries(joystick ${catkin_LIBRARIES})
-
-catkin_install_python(PROGRAMS scripts/serialToArduino.py
-                      DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
-
