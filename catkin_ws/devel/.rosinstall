@@ -1,2 +1,2 @@
 - setup-file:
-    local-name: /home/rover/rover_base/catkin_ws/devel/setup.sh
+    local-name: /home/rover/rover_embedded/catkin_ws/devel/setup.sh

@@ -11,7 +11,7 @@ find_package(catkin REQUIRED COMPONENTS
   sensor_msgs
   std_msgs
 )
-catkin_python_setup()
+#catkin_python_setup()
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -68,11 +68,11 @@ catkin_python_setup()
 # )
 
 ## Generate added messages and services with any dependencies listed here
-# generate_messages(
-#    DEPENDENCIES
-#    sensor_msgs   
-#    std_msgs
-#  )
+#generate_messages(
+#   DEPENDENCIES
+#   sensor_msgs   
+#   std_msgs
+# )
 
 ################################################
 ## Declare ROS dynamic reconfigure parameters ##
@@ -196,3 +196,7 @@ target_link_libraries(controller ${catkin_LIBRARIES})
 
 add_executable(joystick src/joystick.cpp)
 target_link_libraries(joystick ${catkin_LIBRARIES})
+
+#catkin_install_python(PROGRAMS scripts/serialToArduino.py
+#                     DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
+
