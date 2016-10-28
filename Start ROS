@@ -1,0 +1,31 @@
+
+BaseStation Bash:
+export ROS_IP=192.168.1.100				#IP of Basestation: 192.168.1.100
+export ROS_HOSTNAME=192.168.1.100			#IP of Basestation: 192.168.1.100
+export ROS_MASTER_URI="http://192.168.1.101:11311"	#IP of master(odroid): 192.168.1.101
+
+Odroid Bash:
+export ROS_IP=192.168.1.101				#IP of Odroid: 192.168.1.101
+export ROS_HOSTNAME=192.168.1.101			#IP of Odroid: 192.168.1.101
+export ROS_MASTER_URI="http://192.168.1.101:11311"	#IP of master(odroid): 192.168.1.101
+
+
+On Base Station:
+ - Connect to rocket
+ - SSH into Odroid: ssh -X odroid@192.168.1.101 
+ - roslaunch controls start_controls.launch
+
+On Odroid: 
+ - roscore
+ - Start GPS: 
+   rosrun nmea_navsat_driver nmea_serial_driver _port:=/dev/ttyACM# _baud:=38400
+   rosrun random_gps_publisher gps_publisher
+ - Start IMU:
+   rosrun myahrs_driver myahrs_driver _port:=/dev/ttyACM#    OR
+   roslaunch myahrs_driver myahrs_driver.launch
+ - rosrun rosToArduino rosToArduino.py
+
+On Base Station:
+ - Start rqt and run gps and Rviz for IMU 
+
+
