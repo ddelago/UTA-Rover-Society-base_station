@@ -1,26 +1,31 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(controls)
+project(rqt_example_cpp)
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
-  joy
   roscpp
-  rospy
-  sensor_msgs
+  roslint
+  rqt_gui
+  rqt_gui_cpp
   std_msgs
+sensor_msgs
+cv_bridge
+image_transport
 )
-#catkin_python_setup()
-
+find_package(OpenCV)
 ## System dependencies are found with CMake's conventions
-# find_package(Boost REQUIRED COMPONENTS system)
+find_package(Qt4 COMPONENTS QtCore QtGUi REQUIRED)
 
+include(${QT_USE_FILE})
 
 ## Uncomment this if the package has a setup.py. This macro ensures
 ## modules and global scripts declared therein get installed
 ## See http://ros.org/doc/api/catkin/html/user_guide/setup_dot_py.html
-# catkin_python_setup()
+catkin_python_setup()
+
+roslint_cpp()
 
 ################################################
 ## Declare ROS messages, services and actions ##
@@ -68,9 +73,8 @@ find_package(catkin REQUIRED COMPONENTS
 # )
 
 ## Generate added messages and services with any dependencies listed here
-#generate_messages(
+# generate_messages(
 #   DEPENDENCIES
-#   sensor_msgs   
 #   std_msgs
 # )
 
@@ -105,10 +109,26 @@ find_package(catkin REQUIRED COMPONENTS
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
 #  INCLUDE_DIRS include
-#  LIBRARIES controls
-  CATKIN_DEPENDS joy roscpp rospy sensor_msgs std_msgs
+  LIBRARIES ${PROJECT_NAME}
+  CATKIN_DEPENDS roscpp rqt_gui_cpp std_msgs
 #  DEPENDS system_lib
 )
+
+
+set (rqt_example_cpp_SRCS
+  src/rqt_example_cpp/my_plugin.cpp
+)
+
+set(rqt_example_cpp_HDRS
+  include/rqt_example_cpp/my_plugin.h
+)
+
+set(rqt_example_cpp_UIS
+  src/rqt_example_cpp/my_plugin.ui
+)
+
+qt4_wrap_cpp(rqt_example_cpp_MOCS ${rqt_example_cpp_HDRS})
+qt4_wrap_ui(rqt_example_cpp_UIS_H ${rqt_example_cpp_UIS})
 
 ###########
 ## Build ##
@@ -116,32 +136,44 @@ catkin_package(
 
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
-# include_directories(include)
 include_directories(
+  include
+  ${CMAKE_CURRENT_BINARY_DIR}/..
   ${catkin_INCLUDE_DIRS}
+  ${OpenCV_INCLUDE_DIRS}
 )
 
-## Declare a C++ library
-# add_library(controls
-#   src/${PROJECT_NAME}/controls.cpp
-# )
-
-## Add cmake target dependencies of the library
-## as an example, code may need to be generated before libraries
-## either from message generation or dynamic reconfigure
-# add_dependencies(controls ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+## Declare a cpp library
+add_library(${PROJECT_NAME}
+    ${rqt_example_cpp_SRCS}
+    ${rqt_example_cpp_MOCS}
+    ${rqt_example_cpp_UIS_H}
+    )
 
 ## Declare a C++ executable
-# add_executable(controls_node src/controls_node.cpp)
+# add_executable(rqt_example_cpp_node src/rqt_example_cpp_node.cpp)
 
 ## Add cmake target dependencies of the executable
 ## same as for the library above
-# add_dependencies(controls_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+# add_dependencies(rqt_example_cpp_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
-# target_link_libraries(controls_node
-#   ${catkin_LIBRARIES}
-# )
+
+add_executable(opencv_test src/rqt_example_cpp/opencv_test.cpp)
+
+target_link_libraries(${PROJECT_NAME}
+  ${catkin_LIBRARIES}
+  ${QT_QTCORE_LIBRARY}
+  ${QT_QTGUI_LIBRARY}
+  ${OpenCV_LIBRARIES}
+)
+
+target_link_libraries(opencv_test
+  ${catkin_LIBRARIES}
+  ${QT_QTCORE_LIBRARY}
+  ${QT_QTGUI_LIBRARY}
+  ${OpenCV_LIBRARIES}
+)
 
 #############
 ## Install ##
@@ -158,7 +190,7 @@ include_directories(
 # )
 
 ## Mark executables and/or libraries for installation
-# install(TARGETS controls controls_node
+# install(TARGETS rqt_example_cpp rqt_example_cpp_node
 #   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 #   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 #   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
@@ -183,20 +215,10 @@ include_directories(
 #############
 
 ## Add gtest based cpp test target and link libraries
-# catkin_add_gtest(${PROJECT_NAME}-test test/test_controls.cpp)
+# catkin_add_gtest(${PROJECT_NAME}-test test/test_rqt_example_cpp.cpp)
 # if(TARGET ${PROJECT_NAME}-test)
 #   target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
 # endif()
 
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
-
-add_executable(controller src/controller.cpp)
-target_link_libraries(controller ${catkin_LIBRARIES})
-
-add_executable(joystick src/joystick.cpp)
-target_link_libraries(joystick ${catkin_LIBRARIES})
-
-#catkin_install_python(PROGRAMS scripts/serialToArduino.py
-#                     DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
-
