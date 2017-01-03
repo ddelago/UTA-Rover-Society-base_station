@@ -3,6 +3,7 @@ import rospy
 import serial
 import time
 ser = serial.Serial('/dev/ttyACM0')
+ser1 = serial.Serial('/dev/ttyACM1')
 
 ser.baudrate = 9600
 from geometry_msgs.msg import Twist
@@ -25,7 +26,7 @@ def Drive(msg):
 
 	system = system%3
 
-	if(system==0):
+	if(system==0): 							#Drive
 		linear = round(50*(msg.data[7]))
 		angular = round(50*(msg.data[8]))
 		int_linear = int(float(linear))
@@ -57,8 +58,9 @@ def Drive(msg):
 		output = "D" +"," + int_linear + "," + int_angular
 		ser.write(output.encode())
 		print(output)
-
-	elif(system==1):
+	
+	#Arm
+	elif(system==1):									
 		shoulderExt = -1*int(round(100*msg.data[0]))   	#-1 to 1, Left Stick
 		elbowExt = -1*int(round(100*msg.data[1]))		#-1 to 1, Right Stick
 		wristExt = msg.data[2]				#-1, 0, or 1, D-pad up/down
@@ -154,9 +156,9 @@ def Drive(msg):
 		Arm += output
 		
 		print(Arm)
-
 		#Gripper Limits .2 < x < .5 of 270		
-
+		
+	#Sample Return
 	elif(system==2):
 		sarPos = int(round(100*(msg.data[0])))		#L3
 		drillPos = int(round(100*(msg.data[1])))	#R3
