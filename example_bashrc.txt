@@ -1,0 +1,12 @@
+#This is an example of my ROS variables for .bashrc
+
+# For ROS Packages
+#source /opt/ros/indigo/setup.bash
+source /home/daniel/ROSDD/catkin_ws/devel/setup.bash
+export ROS_PACKAGE_PATH=/home/daniel/ROSDD:/opt/ros/indigo/share:/opt/ros/indigo/stacks
+
+# ROS Networking, If I am Master: All should be my IP
+#export ROS_IP=192.168.2.4             				#My IP 192.168.1.100
+#export ROS_HOSTNAME=192.168.2.4       				#My IP 192.168.1.100
+#export ROS_MASTER_URI=http://192.168.1.101:11311 		#If not master, IP of master  192.168.1.101
+

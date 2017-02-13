@@ -1,0 +1,8 @@
+Rocket Titanium
+
+User:	rover
+Password: rover
+
+Wifi:
+rover_rocket
+rover_rocket

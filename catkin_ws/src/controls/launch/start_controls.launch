@@ -1,0 +1,19 @@
+<launch>
+
+	<node pkg="joy" name="controller_raw" type="joy_node">
+		<remap from="joy" to="controller_raw" />
+    		<param name="dev" type="str" value="/dev/input/js0"/>
+  	</node>
+
+  	<node pkg="joy" name="joystick_raw" type="joy_node">
+    		<remap from="joy" to="joystick_raw" />
+    		<param name="dev" type="str" value="/dev/input/js1"/>    
+  	</node>
+
+
+	<!--<node pkg="ros_to_arduino" name="rosToArduino" type="rosToArduino.py"/> -->
+	<node pkg="controls" name="controller" type="controller"/>
+	<node pkg="controls" name="joystick" type="joystick"/>
+
+</launch>
+
