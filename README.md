@@ -20,10 +20,10 @@
 **Base Station Bash:**
 
 Enable Static IP: 
-> cd /etc/network/interfaces
+- cd /etc/network/interfaces
 
 Set ROS_IP to that of the Base Station (192.168.10.10)
-> export ROS_IP=192.168.10.10				      
+- export ROS_IP=192.168.10.10				      
 
 Set ROS_HOSTNAME to that of the Base Station (192.168.10.10)
 > export ROS_HOSTNAME=192.168.10.10			      
