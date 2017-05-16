@@ -32,6 +32,7 @@ Set IP to that of the master(odroid): 192.168.1.101
 > export ROS_MASTER_URI="http://192.168.1.101:11311"	
 
 **Odroid Bash:**
+
 IP of Odroid
 > export ROS_IP=192.168.1.101				
 
