@@ -17,7 +17,7 @@
 * When code is ready for testing submit a pull request to the testing branch
 
 ### How to start up ROS ###
-* BaseStation Bash:
+*BaseStation Bash:
 * Enable Static IP: cd /etc/network/interfaces
 * export ROS_IP=192.168.1.100				#IP of Basestation: 192.168.1.100
 * export ROS_HOSTNAME=192.168.1.100			#IP of Basestation: 192.168.1.100
