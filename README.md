@@ -18,6 +18,7 @@
 
 ### How to start up ROS ###
 Base Station Bash:
+
 Enable Static IP: 
 > cd /etc/network/interfaces
 Set ROS_IP to that of the Base Station (192.168.10.10)
