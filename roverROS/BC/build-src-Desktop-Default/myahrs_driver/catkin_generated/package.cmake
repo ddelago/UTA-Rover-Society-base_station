@@ -1,0 +1,7 @@
+set(_CATKIN_CURRENT_PACKAGE "myahrs_driver")
+set(myahrs_driver_MAINTAINER "Yoonseok Pyo <passionvirus@gmail.com>")
+set(myahrs_driver_DEPRECATED "")
+set(myahrs_driver_VERSION "0.1.1")
+set(myahrs_driver_BUILD_DEPENDS "roscpp" "std_msgs" "sensor_msgs" "tf")
+set(myahrs_driver_RUN_DEPENDS "roscpp" "std_msgs" "sensor_msgs" "tf")
+set(myahrs_driver_BUILDTOOL_DEPENDS "catkin")

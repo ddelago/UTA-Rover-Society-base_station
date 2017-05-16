@@ -1,0 +1,7 @@
+set(_CATKIN_CURRENT_PACKAGE "rTemp")
+set(rTemp_MAINTAINER "ivan <ivan@todo.todo>")
+set(rTemp_DEPRECATED "")
+set(rTemp_VERSION "0.0.0")
+set(rTemp_BUILD_DEPENDS "roscpp" "rospy" "std_msgs")
+set(rTemp_RUN_DEPENDS "roscpp" "rospy" "std_msgs")
+set(rTemp_BUILDTOOL_DEPENDS "catkin")
