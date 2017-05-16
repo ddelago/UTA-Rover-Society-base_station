@@ -20,8 +20,8 @@
 BaseStation Bash:
 
 * Enable Static IP: cd /etc/network/interfaces
-* export ROS_IP=192.168.1.100				#IP of Basestation: 192.168.1.100
-* export ROS_HOSTNAME=192.168.1.100			#IP of Basestation: 192.168.1.100
+* export ROS_IP=192.168.1.100				      #IP of Basestation: 192.168.1.100
+* export ROS_HOSTNAME=192.168.1.100			      #IP of Basestation: 192.168.1.100
 * export ROS_MASTER_URI="http://192.168.1.101:11311"	#IP of master(odroid): 192.168.1.101
 
 Odroid Bash:
