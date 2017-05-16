@@ -17,37 +17,45 @@
 * When code is ready for testing submit a pull request to the testing branch
 
 ### How to start up ROS ###
-BaseStation Bash:
+Base Station Bash:
 
-* Enable Static IP: cd /etc/network/interfaces
-* export ROS_IP=192.168.1.100				      #IP of Basestation: 192.168.1.100
-* export ROS_HOSTNAME=192.168.1.100			      #IP of Basestation: 192.168.1.100
-* export ROS_MASTER_URI="http://192.168.1.101:11311"	#IP of master(odroid): 192.168.1.101
+* Enable Static IP: 
+> cd /etc/network/interfaces
+* Set ROS_IP to that of the Base Station (192.168.10.10)
+> export ROS_IP=192.168.10.10				      
+* Set ROS_HOSTBAME to that of the Base Station (192.168.10.10)
+> export ROS_HOSTNAME=192.168.10.10			      
+* Set IP to that of the master(odroid): 192.168.1.101
+> export ROS_MASTER_URI="http://192.168.1.101:11311"	
 
 Odroid Bash:
-
-* export ROS_IP=192.168.1.101				#IP of Odroid: 192.168.1.101
-* export ROS_HOSTNAME=192.168.1.101			#IP of Odroid: 192.168.1.101
-* export ROS_MASTER_URI="http://192.168.1.101:11311"	#IP of master(odroid): 192.168.1.101
+* IP of Odroid
+> export ROS_IP=192.168.1.101				
+* IP of Ordoid
+> export ROS_HOSTNAME=192.168.1.101			
+* IP of master(Odroid)
+> export ROS_MASTER_URI="http://192.168.1.101:11311"
 
 On Base Station:
 
  - Connect to rocket
- - SSH into Odroid: ssh -X odroid@192.168.1.101 
- - roslaunch controls start_controls.launch
+ - SSH into Odroid: 
+ > ssh -X odroid@192.168.1.101 
+ > roslaunch controls start_controls.launch
 
 On Odroid: 
  
- - roscore
+ > roscore
  - Start GPS: 
-   rosrun nmea_navsat_driver nmea_serial_driver _port:=/dev/ttyACM# _baud:=38400
-   ON BASESTATION: rosrun random_gps_publisher gps_publisher
+ > rosrun nmea_navsat_driver nmea_serial_driver _port:=/dev/ttyACM# _baud:=38400
+   ON BASESTATION: 
+ > rosrun random_gps_publisher gps_publisher
  - Start IMU:
-   rosrun myahrs_driver myahrs_driver _port:=/dev/ttyACM#    OR
-   roslaunch myahrs_driver myahrs_driver.launch
+ > rosrun myahrs_driver myahrs_driver _port:=/dev/ttyACM#    OR
+ > roslaunch myahrs_driver myahrs_driver.launch
  - Start Cameras:
-   rosrun rqt_example_cpp opencv_test 0
- - rosrun rosToArduino rosToArduino.py
+ > rosrun rqt_example_cpp opencv_test 0
+ > rosrun rosToArduino rosToArduino.py
 
 On Base Station:
 
