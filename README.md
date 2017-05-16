@@ -19,14 +19,14 @@
 ### How to start up ROS ###
 **Base Station Bash:**
 
-Enable Static IP: 
+* Enable Static IP: 
 * cd /etc/network/interfaces
 
-Set ROS_IP to that of the Base Station (192.168.10.10)
+* Set ROS_IP to that of the Base Station (192.168.10.10)
 * export ROS_IP=192.168.10.10				      
 
-Set ROS_HOSTNAME to that of the Base Station (192.168.10.10)
-> export ROS_HOSTNAME=192.168.10.10			      
+* Set ROS_HOSTNAME to that of the Base Station (192.168.10.10)
+* export ROS_HOSTNAME=192.168.10.10			      
 
 Set IP to that of the master(odroid): 192.168.1.101
 > export ROS_MASTER_URI="http://192.168.1.101:11311"	
