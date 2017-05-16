@@ -25,18 +25,20 @@ Enable Static IP:
 Set ROS_IP to that of the Base Station (192.168.10.10)
 > export ROS_IP=192.168.10.10				      
 
-Set ROS_HOSTBAME to that of the Base Station (192.168.10.10)
+Set ROS_HOSTNAME to that of the Base Station (192.168.10.10)
 > export ROS_HOSTNAME=192.168.10.10			      
 
 Set IP to that of the master(odroid): 192.168.1.101
 > export ROS_MASTER_URI="http://192.168.1.101:11311"	
 
-Odroid Bash:
-* IP of Odroid
+**Odroid Bash:**
+IP of Odroid
 > export ROS_IP=192.168.1.101				
-* IP of Ordoid
+
+IP of Ordoid
 > export ROS_HOSTNAME=192.168.1.101			
-* IP of master(Odroid)
+
+IP of master(Odroid)
 > export ROS_MASTER_URI="http://192.168.1.101:11311"
 
 On Base Station:
