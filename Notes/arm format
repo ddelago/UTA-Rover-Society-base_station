@@ -1,0 +1,11 @@
+/*DRV:+100,-100
+ARM:1,(+-)100
+ARM: 6 joints
+shoulder rotation:1
+shouder extension: 2
+elbow:3
+wrist extension: 4
+wrist rptation: 5
+Gripper: 6
+SAR:?
+*/
