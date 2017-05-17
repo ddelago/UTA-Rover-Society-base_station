@@ -5,7 +5,7 @@
  * 
  * Node: controller
  * Subscriptions: controller_raw
- * Publishing Topics: cmd_vel AND arm_cmd
+ * Publishing Topics: arm_pub
 */
 #include <stdio.h>
 #include <stdlib.h>
@@ -17,119 +17,149 @@
 class Controls
 {   
     public: Controls();
-    private:void CallBack(const sensor_msgs::Joy::ConstPtr& joy);		
-	    void Drive(const sensor_msgs::Joy::ConstPtr& joy);				//Add more functions as needed 
+    //Add more functions as needed
+    private:
+		void CallBack(const sensor_msgs::Joy::ConstPtr& joy);		
+	    void controls_input(const sensor_msgs::Joy::ConstPtr& joy);				 
     ros::NodeHandle n;
     ros::Subscriber controller_sub;
-    ros::Publisher arm_pub; 				//Add more publishers as needed
+    //Add more publishers as needed
+    ros::Publisher controls_pub; 				
     
     
 };
 
 Controls::Controls()
 {      
-    controller_sub 	= n.subscribe("controller_raw",1, &Controls::CallBack, this); 	//Queue size of 1
-    arm_pub  	= n.advertise<std_msgs::Float32MultiArray>("arm_cmd",1);		//Publish Values into Array
+    //Queue size of 1	
+    controller_sub 	= n.subscribe("controller_raw",1, &Controls::CallBack, this); 	
+    //Publish Values into Array
+    arm_pub  		= n.advertise<std_msgs::Float32MultiArray>("arm_cmd",1);		
 }
 
 //CallBack Function
-void Controls::CallBack(const sensor_msgs::Joy::ConstPtr& joy)				//Add all function calls in here
+void Controls::CallBack(const sensor_msgs::Joy::ConstPtr& joy)				
 {
-    Controls::Drive(joy);
+    //Add all function calls in here
+    Controls::controls_input(joy);
 }
 
 //Controller Functions
-void Controls::Drive(const sensor_msgs::Joy::ConstPtr& joy)				//Inputs are -1.0 to 1.0	
+//All inputs are -1.0 to 1.0
+void Controls::controls_input(const sensor_msgs::Joy::ConstPtr& joy)					
 {
-    float x_axis = -1.0 * (joy->axes[0]);	//Left Stick
-    float forward = (joy->axes[4]);         //Right Trigger R2
-    float reverse = (joy->axes[3]);         //Left Trigger L2
-    float Drive; 
-    forward = -1.0*((forward-1.0)/2.0);		//Converts values  
-    reverse = (reverse-1.0)/2.0;            //Converts values
-    Drive = forward + reverse;              //Combines Forward and Revers Values for net Drive Speed and Direction
+	/*-*-*-*-* Drive *-*-*-*-*/
+
+    //Left Stick
+    float angular = -1.0 * (joy->axes[0]);   
+    //Right Trigger R2
+    float forward = (joy->axes[4]);         
+	//Left Trigger L2
+    float reverse = (joy->axes[3]);         
+	
+	//Value to be published (-1.0 to 1.0)
+    float drive; 
+	//Converts values for R2 and L2 to correct velocity values
+    forward = -1.0*((forward-1.0)/2.0);	    
+    reverse = (reverse-1.0)/2.0;            	
+	//Combines Forward and Reverse values for net drive speed and direction
+    drive = forward + reverse;              
     
-    //Arm Controls
-    float shoulderExt = joy->axes[1];			//Left Stick up down
-    float elbowExt = 	joy->axes[5];			//Right Stick up down
-    float gripperOpen = -1.0*((joy->axes[3]-1.0)/2.0);  //L2
-    float gripperClose = -1.0*((joy->axes[4]-1.0)/2.0); //R2
-    int mode = joy->buttons[3];					//Triangle, switches between drive/arm/sample return
-    int driveFullSpeed = joy->buttons[1];       //X
 
-    int wristExt;
-    if(joy->axes[7]<0){      //Up on D-Pad
-        wristExt = -1;       //Move Up
-    } 
-    else if(joy->axes[7]>0){ //Down on D-Pad
-        wristExt = 1;        //Move Down
-    }
-    else{                    //Don't Move
-        wristExt = 0;
-    }Z
+    /*-*-*-*-* Arm *-*-*-*-*/
 
-    int wristRot;
-    if(joy->axes[6]<0){      //Up on D-Pad
-        wristRot = -1;       //Move Up
-    }
-    else if(joy->axes[6]>0){ //Down on D-Pad
-        wristRot = 1;        //Move Down
-    }
-    else{                    //Don't Move
-        wristRot = 0;
-    }
+	//ADD SHOULDER ROTATION
+
+	//Right stick left & right
+    float shoulder_rotation
+	//Left stick up & down
+    float shoulder_extension = joy->axes[1];			
+	//Right stick up & down
+    float elbow_extension = 	joy->axes[5];			
+	
+    int wrist_extension;
+	//Up on D-Pad, move up
+    if(joy->axes[7]<0)      
+        wrist_extension = -1;      
+	//Down on D-Pad, move down 
+    else if(joy->axes[7]>0) 
+        wrist_extension = 1;        
+    else                    
+        wrist_extension = 0;
+
+    int wrist_rotation;
+	//Left on D-Pad, rotate left
+    if(joy->axes[6]<0)      
+        wrist_rotation = -1;      
+	//Right on D-Pad, rotate right 
+    else if(joy->axes[6]>0) 
+        wrist_rotation = 1;
+    else                   
+        wrist_rotation = 0;
+    
+	//L2
+    float gripper_open = -1.0*((joy->axes[3]-1.0)/2.0);  
+
+	//R2
+    float gripper_close = -1.0*((joy->axes[4]-1.0)/2.0);
 
 
-    //Sample Return
-    int tray;
-    if(joy->axes[6]>0){      //Right on D-Pad
-        tray = -1;            //Rotate Right
-    } 
-    else if(joy->axes[6]<0){ //Left on D-Pad
-        tray = 1;           //Rotate Left
-    }
-    else{                    //Dont Move
+    /*-*-*-*-* Sample Return *-*-*-*-*/
+
+	int tray;
+	//Right on D-Pad, rotate right
+    if(joy->axes[6]>0)      
+        tray = -1;         
+	//Left on D-Pad, rotate left    
+    else if(joy->axes[6]<0)
+        tray = 1;           
+    else                 
         tray = 0;
-    }
-
+    
     int probe;
-    if(joy->axes[7]<0){      //Up on D-Pad
-        probe = -1;           //Move Up
-    } 
-    else if(joy->axes[7]>0){ //Down on D-Pad
-        probe = 1;          //Move Down
-    }
-    else{                    //Don't Move
+	//Up on D-Pad, raise probe
+    if(joy->axes[7]<0)      
+        probe = -1;         
+	//Down on D-Pad, lower probe      
+    else if(joy->axes[7]>0) 
+        probe = 1;              
+    else                   
         probe = 0;
-    }
+    
+	/*-*-*-*-* Extra *-*-*-*-*/
 
+	//X, allows max drive speed
+    int driveFullSpeed = joy->buttons[1];       	
+	//Triangle, switches between drive/arm/sample return 
+    int mode = joy->buttons[3];					
 
-
-    std_msgs::Float32MultiArray msg1;  	//Publish Values to an Array
-    msg1.data.push_back(shoulderExt);	//0 Shoulder Extension
-    msg1.data.push_back(elbowExt);		//1	
-    msg1.data.push_back(wristExt);		//2
-    msg1.data.push_back(wristRot);		//3
-    msg1.data.push_back(gripperOpen);   //4
-    msg1.data.push_back(gripperClose);  //5
-    msg1.data.push_back(mode);			//6
-    msg1.data.push_back(Drive);			//7
-    msg1.data.push_back(x_axis);		//8
-    msg1.data.push_back(tray);      	//9
-    msg1.data.push_back(probe);    	 	//10
-    msg1.data.push_back(driveFullSpeed);//11
+	//Publish to an Array
+    std_msgs::Float32MultiArray msg1;  	
+    msg1.data.push_back(shoulder_extension);//0 
+    msg1.data.push_back(elbow_extension);	//1	
+    msg1.data.push_back(wrist_extension);	//2
+    msg1.data.push_back(wrist_rotation);	//3
+    msg1.data.push_back(gripper_open);   	//4
+    msg1.data.push_back(gripper_close);  	//5
+    msg1.data.push_back(mode);				//6
+    msg1.data.push_back(drive);				//7
+    msg1.data.push_back(angular);			//8
+    msg1.data.push_back(tray);      		//9
+    msg1.data.push_back(probe);    	 		//10
+    msg1.data.push_back(driveFullSpeed);	//11
 
     arm_pub.publish(msg1);
     
 }
 
-
 int main(int argc, char **argv)
-{
-    ros::init(argc, argv, "controller");  	//Create node named "controller"
+{	
+	//Create node named "controller"
+    ros::init(argc, argv, "controller");  	
     Controls controls;   
-
-    ros::Rate loop_rate(3);			//Publishes x times per second
+	
+	//Publishes x times per second
+    ros::Rate loop_rate(3);			
     while(ros::ok()){
         ros::spinOnce();
         loop_rate.sleep();

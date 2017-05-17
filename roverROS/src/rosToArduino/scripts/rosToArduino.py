@@ -190,39 +190,6 @@ def Drive(msg):
 		elif(moveProbe == 0):
 			moveProbe = "+0"
 
-	
-		if(len(sarPos)==3):
-			sarPos = sarPos[0] + '0' + sarPos[1:]
-		if(len(sarPos)==2):
-			sarPos = sarPos[0] + '00' + sarPos[1:]
-		output = "R" +"," + "1" + "," + sarPos
-		ser.write(output.encode())
-		SR = output
-
-		if(len(drillPos)==3):
-			drillPos = drillPos[0] + '0' + drillPos[1:]
-		if(len(drillPos)==2):
-			drillPos = drillPos[0] + '00' + drillPos[1:]
-		output = "R" +"," + "2" + "," + drillPos
-		ser.write(output.encode())
-		SR += output
-
-		if(len(spinDrill)==3):
-			spinDrill = spinDrill[0] + '0' + spinDrill[1:]
-		if(len(spinDrill)==2):
-			spinDrill = spinDrill[0] + '00' + spinDrill[1:]
-		output = "R" +"," + "3" + "," + spinDrill
-		ser.write(output.encode())
-		SR += output
-
-		if(len(moveTray)==3):
-			moveTray = moveTray[0] + '0' + moveTray[1:]
-		if(len(moveTray)==2):
-			moveTray = moveTray[0] + '00' + moveTray[1:]
-		output = "R" +"," + "4" + "," + moveTray
-		ser.write(output.encode())
-		SR += output
-
 		if(len(moveProbe)==3):
 			moveProbe = moveProbe[0] + '0' + moveProbe[1:]
 		if(len(moveProbe)==2):
@@ -235,7 +202,6 @@ def Drive(msg):
 
 def status_check(event):
     ser.write('C')
-
 
 def listener():
     rospy.init_node('rosToArduino')
