@@ -66,19 +66,8 @@ void Controls::Drive(const sensor_msgs::Joy::ConstPtr& joy)				//Inputs are -1.0
     }
     else{                    //Don't Move
         wristExt = 0;
-    }
+    }Z
 
-/*DRV:+100,-100
-ARM:1,(+-)100
-ARM: 6 joints
-shoulder rotation:1
-shouder extension: 2
-elbow:3
-wrist extension: 4
-wrist rptation: 5
-Gripper: 6
-SAR:?
-*/
     int wristRot;
     if(joy->axes[6]<0){      //Up on D-Pad
         wristRot = -1;       //Move Up

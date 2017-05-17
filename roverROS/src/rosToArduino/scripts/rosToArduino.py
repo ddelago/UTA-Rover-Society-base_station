@@ -3,7 +3,6 @@ import rospy
 import serial
 import time
 ser = serial.Serial('/dev/ttyACM0')
-#ser1 = serial.Serial('/dev/ttyACM1')
 
 ser.baudrate = 9600
 from geometry_msgs.msg import Twist
@@ -11,61 +10,81 @@ from std_msgs.msg import Float32MultiArray
 from std_msgs.msg import String
 system = 0
 
-
-###-~-~-~-~ If no changes, no output, help prevent flooding system -~-~-~-~###
-"""
-	if(newValue!=oldValue):
-		Write to Serial
-	oldValue=newValue
-"""
 def Drive_auto(msg):
 	rospy.loginfo(rospy.get_caller_id() + "Autonomy is sending: %s",msg.data)
 	ser.write(msg.data.encode())
 	
 def Drive(msg):
+	"""
+	Control System:
+	The value of system (0, 1, or 2) will determine what control system is currently activated.
+	Each time the triangle button is pressed, it increments the system variable by one. 
+	This also changes the control system.
+	0: Drive
+	1: Arm
+	2: Sample Return 	
+	"""
 	global system
 	if(msg.data[6]==1):
 		system += 1
-
 	system = system%3
 
-	if(system==0): 							#Drive
-		linear = round(50*(msg.data[7]))
-		angular = round(50*(msg.data[8]))
+	#Drive	
+	#Format: 
+	#DRV:Linear,Angular
+	#DRV:(+-)(0-100),(+-)(0-100)
+	if(system==0):
+		#soft_max is the maximum speed that the rover will move using only the triggers. (Without X pressed)
+		soft_max = 50 							
+		linear = round(soft_max*(msg.data[7]))
+		angular = round(soft_max*(msg.data[8]))
 		int_linear = int(float(linear))
 		int_angular = int(float(angular))
-
-		if(msg.data[11]==1 and int_linear==50):		#Full Speed Forward
+		
+		"""
+		Maximum Speed:
+		Full speed forward is set only when the trigger is fully pushed and when the X button is also pressed. 
+		This will allow a maximum linear speed of 80 (80% of the true maximum speed).   
+  		If the X button is not also pressed, the maximum linear speed will be 50.
+		"""
+		if(msg.data[11]==1 and int_linear==50):			 
 			int_linear=80
-		if(msg.data[11]==1 and int_linear==-50):		#Full Speed Backwards
+		if(msg.data[11]==1 and int_linear==-50):					
 			int_linear=-80
-
+		
+		#Serial Formatting: Conditionals on wether to include a '+' or not 
 		if(int_linear >= 0):
 			int_linear = "+" + str(int_linear)
 		elif(int_linear < 0):
 			int_linear = str(int_linear)
-
 		if(int_angular >= 0):
 			int_angular = "+" + str(int_angular)
 		elif(int_angular < 0):
 			int_angular = str(int_angular)
-	
-		if(len(int_linear)==3):
-			int_linear = int_linear[0] + '0' + int_linear[1:]
-		if(len(int_angular)==3):
-			int_angular = int_angular[0] + '0' + int_angular[1:]
-		if(len(int_linear)==2):
-			int_linear = int_linear[0] + '00' + int_linear[1:]
-		if(len(int_angular)==2):
-			int_angular = int_angular[0] + '00' + int_angular[1:]
+		
+		#Formatting serial output string
 		output = "DRV" +":" + int_linear + "," + int_angular + "\n"
 		ser.write(output.encode())
-		#rospy.loginfo(rospy.get_caller_id() + "apples ")
+		
+		#Print to Base Station terminal
 		print(output);
+
 	#Arm
-	elif(system==1):									
+	#Format:
+	#ARM:Joint,Speed
+	#ARM:(1-6),(+-)(0-100)
+	elif(system==1):
+		"""
+		Joints:
+		1: Shoulder Rotation
+		2: Shoulder Extension
+		3: Elbow Extension
+		4: Wrist Extension
+		5: Wrist Rotation
+		6: Gripper Open/Close
+		"""									
 		shoulderExt = -1*int(round(100*msg.data[0]))   	#-1 to 1, Left Stick
-		elbowExt = -1*int(round(100*msg.data[1]))		#-1 to 1, Right Stick
+		elbowExt = -1*int(round(100*msg.data[1]))	#-1 to 1, Right Stick
 		wristExt = msg.data[2]				#-1, 0, or 1, D-pad up/down
 		gripperOpen = int(round(-100*(msg.data[4])))	#L2
 		gripperClose = int(round(100*(msg.data[5])))	#R2
@@ -112,32 +131,7 @@ def Drive(msg):
 		elif(elbowExt < 0):
 			elbowExtOUT = str(elbowExt)
 
-		if(len(shoulderExtOUT)==3):
-			shoulderExtOUT = shoulderExtOUT[0] + '0' + shoulderExtOUT[1:]
-		if(len(shoulderExtOUT)==2):
-			shoulderExtOUT = shoulderExtOUT[0] + '00' + shoulderExtOUT[1:]
-
-		if(len(elbowExtOUT)==3):
-			elbowExtOUT = elbowExtOUT[0] + '0' + elbowExtOUT[1:]
-		if(len(elbowExtOUT)==2):
-			elbowExtOUT = elbowExtOUT[0] + '00' + elbowExtOUT[1:]
-
-		if(len(wristRot)==3):
-			wristRot = wristRot[0] + '0' + wristRot[1:]
-		if(len(wristRot)==2):
-			wristRot = wristRot[0] + '00' + wristRot[1:]
-
-		if(len(wristExtOUT)==3):
-			wristExtOUT = wristExtOUT[0] + '0' + wristExtOUT[1:]
-		if(len(wristExtOUT)==2):
-			wristExtOUT = wristExtOUT[0] + '00' + wristExtOUT[1:]
-
-		if(len(gripperState)==3):
-			gripperState = gripperState[0] + '0' + gripperState[1:]
-		if(len(gripperState)==2):
-			gripperState = gripperState[0] + '00' + gripperState[1:]
-
-		
+		#Formatting serial output string
 		output = "A" +"," + "2" + "," + shoulderExtOUT
 		ser.write(output.encode())
 		Arm = output
@@ -244,7 +238,7 @@ def status_check(event):
 
 
 def listener():
-    rospy.init_node('rosToArduino2')
+    rospy.init_node('rosToArduino')
     rospy.Subscriber("arm_cmd", Float32MultiArray, Drive)
     rospy.Subscriber("drive_cmd", String, Drive)
     rospy.Timer(rospy.Duration(1), status_check)
