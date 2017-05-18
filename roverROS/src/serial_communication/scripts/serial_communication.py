@@ -52,16 +52,6 @@ def Drive(msg):
 		if(msg.data[11]==1 and int_linear==-50):					
 			int_linear=-80
 		
-		#Serial Formatting: Conditionals on wether to include a '+' or not 
-		if(int_linear >= 0):
-			int_linear = "+" + str(int_linear)
-		elif(int_linear < 0):
-			int_linear = str(int_linear)
-		if(int_angular >= 0):
-			int_angular = "+" + str(int_angular)
-		elif(int_angular < 0):
-			int_angular = str(int_angular)
-		
 		#Formatting serial output string
 		output = "DRV" +":" + int_linear + "," + int_angular + "\n"
 		ser.write(output.encode())
@@ -107,51 +97,20 @@ def Drive(msg):
 		elif(wrist_rotation == 0):
 			wrist_rotation = 0
 
-		#Serial Formatting: Conditionals on wether to include a '+' or not		
-		if(shoulder_rotation >= 0):
-			shoulder_rotation_out = "+" + str(shoulder_rotation)
-		elif(shoulder_rotation < 0):
-			shoulder_rotation_out = str(shoulder_rotation)
-
-		if(shoulder_extension >= 0):
-			shoulder_extension_out = "+" + str(shoulder_extension)
-		elif(shoulder_extension < 0):
-			shoulder_extension_out = str(shoulder_extension)
-
-		if(elbow_extension >= 0):
-			elbow_extension_out = "+" + str(elbow_extension)
-		elif(elbow_extension < 0):
-			elbow_extension_out = str(elbow_extension)
-
-		if(wrist_extension >= 0):
-			wrist_extension_out = "+" + str(wrist_extension)
-		elif(wrist_extension < 0):
-			wrist_extension_out = str(wrist_extension)
-
-		if(wrist_rotation >= 0):
-			wrist_rotation = "+" + str(wrist_rotation)
-		elif(wrist_rotation < 0):
-			wrist_rotation = str(wrist_rotation)
-
-		if(gripperState >= 0):
-			gripperState = "+" + str(gripperState)
-		elif(gripperState < 0):
-			gripperState = str(gripperState)
-
 		#Formatting serial output string
-		output = "A" +"," + "1" + "," + shoulder_rotation_out
+		output = "A" +"," + "1" + "," + shoulder_rotation
 		ser.write(output.encode())
 		Arm = output
 
-		output = "A" +"," + "2" + "," + shoulder_extension_out
+		output = "A" +"," + "2" + "," + shoulder_extension
 		ser.write(output.encode())
 		Arm += output
 
-		output = "A" +"," + "3" + "," + elbow_extension_out
+		output = "A" +"," + "3" + "," + elbow_extension
 		ser.write(output.encode())
 		Arm += output	
 
-		output = "A" +"," + "4" + "," + wrist_extension_out
+		output = "A" +"," + "4" + "," + wrist_extension
 		ser.write(output.encode())
 		Arm += output		
 
@@ -176,32 +135,18 @@ def Drive(msg):
 
 		#Max values
 		if(move_tray == 1):
-			move_tray = "+20"
+			move_tray = "20"
 		elif(move_tray == -1):
 			move_tray = "-20"
 		elif(move_tray == 0):
-			move_tray = "+0"
+			move_tray = "0"
 
 		if(move_probe == 1):
-			move_probe = "+20"
+			move_probe = "20"
 		elif(move_probe == -1):
 			move_probe = "-20"
 		elif(move_probe == 0):
-			move_probe = "+0"
-
-		#Serial Formatting: Conditionals on wether to include a '+' or not
-		if(sar_position >= 0):
-			sar_position = "+" + str(sar_position)
-		elif(sar_position < 0):
-			sar_position = str(sar_position)
-
-		if(drill_position >= 0):
-			drill_position = "+" + str(drill_position)
-		elif(drill_position < 0):
-			drill_position = str(drill_position)
-
-		if(spin_drill >= 0):
-			spin_drill = "+" + str(spin_drill)
+			move_probe = "0"
 
 		#Formatting serial output string
 		output = "R" +"," + "1" + "," + sar_position
