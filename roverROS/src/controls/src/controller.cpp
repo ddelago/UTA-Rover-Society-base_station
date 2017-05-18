@@ -5,7 +5,7 @@
  * 
  * Node: controller
  * Subscriptions: controller_raw
- * Publishing Topics: arm_pub
+ * Publishing Topics: controls_input
 */
 #include <stdio.h>
 #include <stdlib.h>
@@ -34,7 +34,7 @@ Controls::Controls()
     //Queue size of 1	
     controller_sub 	= n.subscribe("controller_raw",1, &Controls::CallBack, this); 	
     //Publish Values into Array
-    arm_pub  		= n.advertise<std_msgs::Float32MultiArray>("arm_cmd",1);		
+    controls_pub  		= n.advertise<std_msgs::Float32MultiArray>("contols_input",1);		
 }
 
 //CallBack Function
@@ -71,7 +71,7 @@ void Controls::controls_input(const sensor_msgs::Joy::ConstPtr& joy)
 	//ADD SHOULDER ROTATION
 
 	//Right stick left & right
-    float shoulder_rotation
+    float shoulder_rotation;
 	//Left stick up & down
     float shoulder_extension = joy->axes[1];			
 	//Right stick up & down
@@ -148,14 +148,14 @@ void Controls::controls_input(const sensor_msgs::Joy::ConstPtr& joy)
     msg1.data.push_back(probe);    	 		//10
     msg1.data.push_back(driveFullSpeed);	//11
 
-    arm_pub.publish(msg1);
+    controls_pub.publish(msg1);
     
 }
 
 int main(int argc, char **argv)
 {	
 	//Create node named "controller"
-    ros::init(argc, argv, "controller");  	
+    ros::init(argc, argv, "controls");  	
     Controls controls;   
 	
 	//Publishes x times per second

@@ -205,8 +205,8 @@ def status_check(event):
 
 def listener():
     rospy.init_node('rosToArduino')
-    rospy.Subscriber("arm_cmd", Float32MultiArray, Drive)
-    rospy.Subscriber("drive_cmd", String, Drive)
+    rospy.Subscriber("controls_input", Float32MultiArray, Drive)
+    #rospy.Subscriber("drive_cmd", String, Drive)
     rospy.Timer(rospy.Duration(1), status_check)
     #rospy.Subsciber("Topic", Type, FunctionCall)	
     rospy.spin()

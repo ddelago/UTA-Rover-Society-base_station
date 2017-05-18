@@ -67,14 +67,14 @@ set(myahrs_driver_CONFIG_INCLUDED TRUE)
 
 # set variables for source/devel/install prefixes
 if("TRUE" STREQUAL "TRUE")
-  set(myahrs_driver_SOURCE_PREFIX /home/rover/Desktop/rover_base/roverROS/src/myahrs_driver)
-  set(myahrs_driver_DEVEL_PREFIX /home/rover/Desktop/rover_base/roverROS/devel)
+  set(myahrs_driver_SOURCE_PREFIX /home/daniel/rover_base/roverROS/src/myahrs_driver)
+  set(myahrs_driver_DEVEL_PREFIX /home/daniel/rover_base/roverROS/devel)
   set(myahrs_driver_INSTALL_PREFIX "")
   set(myahrs_driver_PREFIX ${myahrs_driver_DEVEL_PREFIX})
 else()
   set(myahrs_driver_SOURCE_PREFIX "")
   set(myahrs_driver_DEVEL_PREFIX "")
-  set(myahrs_driver_INSTALL_PREFIX /home/rover/Desktop/rover_base/roverROS/install)
+  set(myahrs_driver_INSTALL_PREFIX /home/daniel/rover_base/roverROS/install)
   set(myahrs_driver_PREFIX ${myahrs_driver_INSTALL_PREFIX})
 endif()
 
@@ -91,9 +91,9 @@ endif()
 # flag project as catkin-based to distinguish if a find_package()-ed project is a catkin project
 set(myahrs_driver_FOUND_CATKIN_PROJECT TRUE)
 
-if(NOT "/home/rover/Desktop/rover_base/roverROS/src/myahrs_driver/include " STREQUAL " ")
+if(NOT "/home/daniel/rover_base/roverROS/src/myahrs_driver/include " STREQUAL " ")
   set(myahrs_driver_INCLUDE_DIRS "")
-  set(_include_dirs "/home/rover/Desktop/rover_base/roverROS/src/myahrs_driver/include")
+  set(_include_dirs "/home/daniel/rover_base/roverROS/src/myahrs_driver/include")
   foreach(idir ${_include_dirs})
     if(IS_ABSOLUTE ${idir} AND IS_DIRECTORY ${idir})
       set(include ${idir})
@@ -103,7 +103,7 @@ if(NOT "/home/rover/Desktop/rover_base/roverROS/src/myahrs_driver/include " STRE
         message(FATAL_ERROR "Project 'myahrs_driver' specifies '${idir}' as an include dir, which is not found.  It does not exist in '${include}'.  Ask the maintainer 'Yoonseok Pyo <passionvirus@gmail.com>' to fix it.")
       endif()
     else()
-      message(FATAL_ERROR "Project 'myahrs_driver' specifies '${idir}' as an include dir, which is not found.  It does neither exist as an absolute directory nor in '/home/rover/Desktop/rover_base/roverROS/src/myahrs_driver/${idir}'.  Ask the maintainer 'Yoonseok Pyo <passionvirus@gmail.com>' to fix it.")
+      message(FATAL_ERROR "Project 'myahrs_driver' specifies '${idir}' as an include dir, which is not found.  It does neither exist as an absolute directory nor in '/home/daniel/rover_base/roverROS/src/myahrs_driver/${idir}'.  Ask the maintainer 'Yoonseok Pyo <passionvirus@gmail.com>' to fix it.")
     endif()
     _list_append_unique(myahrs_driver_INCLUDE_DIRS ${include})
   endforeach()
@@ -122,7 +122,7 @@ foreach(library ${libraries})
     set(lib_path "")
     set(lib "${library}-NOTFOUND")
     # since the path where the library is found is returned we have to iterate over the paths manually
-    foreach(path /home/rover/Desktop/rover_base/roverROS/devel/lib;/home/rover/Desktop/rover_base/roverROS/devel/lib;/opt/ros/indigo/lib)
+    foreach(path /home/daniel/rover_base/roverROS/devel/lib;/home/daniel/catkin_ws/install/lib;/home/daniel/ROSDD/catkin_ws/devel/lib;/opt/ros/indigo/lib)
       find_library(lib ${library}
         PATHS ${path}
         NO_DEFAULT_PATH NO_CMAKE_FIND_ROOT_PATH)
