@@ -147,6 +147,7 @@ void Controls::controls_input(const sensor_msgs::Joy::ConstPtr& joy)
     msg1.data.push_back(tray);      		//9
     msg1.data.push_back(probe);    	 		//10
     msg1.data.push_back(driveFullSpeed);	//11
+    msg1.data.push_back(shoulder_rotation);	//12
 
     controls_pub.publish(msg1);
     

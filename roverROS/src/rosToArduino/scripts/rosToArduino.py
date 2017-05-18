@@ -82,69 +82,80 @@ def Drive(msg):
 		4: Wrist Extension
 		5: Wrist Rotation
 		6: Gripper Open/Close
-		"""									
-		shoulderExt = -1*int(round(100*msg.data[0]))   	#-1 to 1, Left Stick
-		elbowExt = -1*int(round(100*msg.data[1]))	#-1 to 1, Right Stick
-		wristExt = msg.data[2]				#-1, 0, or 1, D-pad up/down
-		gripperOpen = int(round(-100*(msg.data[4])))	#L2
-		gripperClose = int(round(100*(msg.data[5])))	#R2
+		"""
+		shoulder_rotation = -1*int(round(100*msg.data[12]))		#-1 to 1, Right Stick left/right									
+		shoulder_extension = -1*int(round(100*msg.data[0]))   	#-1 to 1, Left Stick up/down
+		elbow_extension = -1*int(round(100*msg.data[1]))		#-1 to 1, Right Stick
+		wrist_extension = msg.data[2]							#-1, 0, or 1, D-pad up/down
+		gripperOpen = int(round(-100*(msg.data[4])))			#L2
+		gripperClose = int(round(100*(msg.data[5])))			#R2
 		gripperState =  gripperOpen + gripperClose
-		wristRot = msg.data[3]      			#-1, 0, or 1, D-pad left/right
+		wrist_rotation = msg.data[3]      						#-1, 0, or 1, D-pad left/right
 		
-		if(wristExt == 1):
-			wristExt = -75
-		elif(wristExt == -1):
-			wristExt = 75
-		elif(wristExt == 0):
-			wristExt = 0
+		#Max values
+		if(wrist_extension == 1):
+			wrist_extension = -75
+		elif(wrist_extension == -1):
+			wrist_extension = 75
+		elif(wrist_extension == 0):
+			wrist_extension = 0
 
-		if(wristRot == 1):
-			wristRot = -85
-		elif(wristRot == -1):
-			wristRot = 85
-		elif(wristRot == 0):
-			wristRot = 0
+		if(wrist_rotation == 1):
+			wrist_rotation = -85
+		elif(wrist_rotation == -1):
+			wrist_rotation = 85
+		elif(wrist_rotation == 0):
+			wrist_rotation = 0
 
-		#String Formatting for Serial
+		#Serial Formatting: Conditionals on wether to include a '+' or not		
+		if(shoulder_rotation >= 0):
+			shoulder_rotation_out = "+" + str(shoulder_rotation)
+		elif(shoulder_rotation < 0):
+			shoulder_rotation_out = str(shoulder_rotation)
+
+		if(shoulder_extension >= 0):
+			shoulder_extension_out = "+" + str(shoulder_extension)
+		elif(shoulder_extension < 0):
+			shoulder_extension_out = str(shoulder_extension)
+
+		if(elbow_extension >= 0):
+			elbow_extension_out = "+" + str(elbow_extension)
+		elif(elbow_extension < 0):
+			elbow_extension_out = str(elbow_extension)
+
+		if(wrist_extension >= 0):
+			wrist_extension_out = "+" + str(wrist_extension)
+		elif(wrist_extension < 0):
+			wrist_extension_out = str(wrist_extension)
+
+		if(wrist_rotation >= 0):
+			wrist_rotation = "+" + str(wrist_rotation)
+		elif(wrist_rotation < 0):
+			wrist_rotation = str(wrist_rotation)
+
 		if(gripperState >= 0):
 			gripperState = "+" + str(gripperState)
 		elif(gripperState < 0):
 			gripperState = str(gripperState)
 
-		if(wristExt >= 0):
-			wristExtOUT = "+" + str(wristExt)
-		elif(wristExt < 0):
-			wristExtOUT = str(wristExt)
- 	
-		if(wristRot >= 0):
-			wristRot = "+" + str(wristRot)
-		elif(wristRot < 0):
-			wristRot = str(wristRot)
-
-		if(shoulderExt >= 0):
-			shoulderExtOUT = "+" + str(shoulderExt)
-		elif(shoulderExt < 0):
-			shoulderExtOUT = str(shoulderExt)
-
-		if(elbowExt >= 0):
-			elbowExtOUT = "+" + str(elbowExt)
-		elif(elbowExt < 0):
-			elbowExtOUT = str(elbowExt)
-
 		#Formatting serial output string
-		output = "A" +"," + "2" + "," + shoulderExtOUT
+		output = "A" +"," + "1" + "," + shoulder_rotation_out
 		ser.write(output.encode())
 		Arm = output
 
-		output = "A" +"," + "3" + "," + elbowExtOUT
+		output = "A" +"," + "2" + "," + shoulder_extension_out
+		ser.write(output.encode())
+		Arm += output
+
+		output = "A" +"," + "3" + "," + elbow_extension_out
 		ser.write(output.encode())
 		Arm += output	
 
-		output = "A" +"," + "4" + "," + wristExtOUT
+		output = "A" +"," + "4" + "," + wrist_extension_out
 		ser.write(output.encode())
 		Arm += output		
 
-		output = "A" +"," + "5" + "," + wristRot
+		output = "A" +"," + "5" + "," + wrist_rotation
 		ser.write(output.encode())
 		Arm += output
 		
@@ -152,54 +163,71 @@ def Drive(msg):
 		ser.write(output.encode())
 		Arm += output
 		
-		print(Arm)
-		#Gripper Limits .2 < x < .5 of 270		
+		#Print to Base Station terminal
+		print(Arm)		
 		
 	#Sample Return
 	elif(system==2):
-		sarPos = int(round(100*(msg.data[0])))		#L3
-		drillPos = int(round(100*(msg.data[1])))	#R3
-		spinDrill = int(round(100*(msg.data[5])))	#R2
-		moveTray = int(msg.data[9])			#1 is right, -1 is left, D-Pad
-		moveProbe = int(msg.data[10])		#1 is up, -1 is down, D-Pad
+		sar_position = int(round(100*(msg.data[0])))	#Left stick
+		drill_position = int(round(100*(msg.data[1])))	#Right stick
+		spin_drill = int(round(100*(msg.data[5])))		#R2
+		move_tray = int(msg.data[9])					#1 is right, -1 is left, D-Pad
+		move_probe = int(msg.data[10])					#1 is up, -1 is down, D-Pad
 
-		if(sarPos >= 0):
-			sarPos = "+" + str(sarPos)
-		elif(sarPos < 0):
-			sarPos = str(sarPos)
+		#Max values
+		if(move_tray == 1):
+			move_tray = "+20"
+		elif(move_tray == -1):
+			move_tray = "-20"
+		elif(move_tray == 0):
+			move_tray = "+0"
 
-		if(drillPos >= 0):
-			drillPos = "+" + str(drillPos)
-		elif(drillPos < 0):
-			drillPos = str(drillPos)
+		if(move_probe == 1):
+			move_probe = "+20"
+		elif(move_probe == -1):
+			move_probe = "-20"
+		elif(move_probe == 0):
+			move_probe = "+0"
 
-		if(spinDrill >= 0):
-			spinDrill = "+" + str(spinDrill)
+		#Serial Formatting: Conditionals on wether to include a '+' or not
+		if(sar_position >= 0):
+			sar_position = "+" + str(sar_position)
+		elif(sar_position < 0):
+			sar_position = str(sar_position)
 
-		if(moveTray == 1):
-			moveTray = "+20"
-		elif(moveTray == -1):
-			moveTray = "-20"
-		elif(moveTray == 0):
-			moveTray = "+0"
+		if(drill_position >= 0):
+			drill_position = "+" + str(drill_position)
+		elif(drill_position < 0):
+			drill_position = str(drill_position)
 
-		if(moveProbe == 1):
-			moveProbe = "+20"
-		elif(moveProbe == -1):
-			moveProbe = "-20"
-		elif(moveProbe == 0):
-			moveProbe = "+0"
+		if(spin_drill >= 0):
+			spin_drill = "+" + str(spin_drill)
 
-		if(len(moveProbe)==3):
-			moveProbe = moveProbe[0] + '0' + moveProbe[1:]
-		if(len(moveProbe)==2):
-			moveProbe = moveProbe[0] + '00' + moveProbe[1:]
-		output = "R" +"," + "5" + "," + moveProbe
+		#Formatting serial output string
+		output = "R" +"," + "1" + "," + sar_position
+		ser.write(output.encode())
+		SR = output
+
+		output = "R" +"," + "2" + "," + drill_position
 		ser.write(output.encode())
 		SR += output
 
+		output = "R" +"," + "3" + "," + spin_drill
+		ser.write(output.encode())
+		SR += output
+
+		output = "R" +"," + "4" + "," + move_tray
+		ser.write(output.encode())
+		SR += output
+
+		output = "R" +"," + "5" + "," + move_probe
+		ser.write(output.encode())
+		SR += output
+
+		#Print to Base Station terminal
 		print(SR)
 
+#Health check
 def status_check(event):
     ser.write('C')
 
