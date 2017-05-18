@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <package>
-  <name>arduinoToRos</name>
+  <name>arduino_status</name>
   <version>0.0.0</version>
   <description>The arduinoToRos package</description>
   <maintainer email="ddelago0596@gmail.com">Daniel Delago</maintainer>

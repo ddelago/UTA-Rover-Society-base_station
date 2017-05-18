@@ -232,7 +232,7 @@ def status_check(event):
     ser.write('C')
 
 def listener():
-    rospy.init_node('rosToArduino')
+    rospy.init_node('serial_communication')
     rospy.Subscriber("controls_input", Float32MultiArray, Drive)
     #rospy.Subscriber("drive_cmd", String, Drive)
     rospy.Timer(rospy.Duration(1), status_check)

@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(arduinoToRos)
+project(arduino_status)
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
@@ -185,5 +185,5 @@ include_directories(
 
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
-catkin_install_python(PROGRAMS scripts/arduinoToRos.py
+catkin_install_python(PROGRAMS scripts/arduino_status.py
                       DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})

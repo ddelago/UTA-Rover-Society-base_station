@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <package>
-  <name>rosToArduino</name>
+  <name>serial_communication</name>
   <version>0.0.0</version>
   <description>The rosToArduino package</description>
   <maintainer email="ddelago0596@gmail.com">Daniel Delago</maintainer>
