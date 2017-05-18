@@ -34,7 +34,7 @@ Controls::Controls()
     //Queue size of 1	
     controller_sub 	= n.subscribe("controller_raw",1, &Controls::CallBack, this); 	
     //Publish Values into Array
-    controls_pub  		= n.advertise<std_msgs::Float32MultiArray>("contols_input",1);		
+    controls_pub  		= n.advertise<std_msgs::Float32MultiArray>("controls_input",1);		
 }
 
 //CallBack Function

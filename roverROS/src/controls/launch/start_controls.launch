@@ -9,6 +9,6 @@
     		<param name="dev" type="str" value="/dev/input/js1"/>    
   	</node>
 
-	<node pkg="controls" name="controller" type="controller"/>
+	<node pkg="controls" name="controls" type="controller"/>
 	<node pkg="controls" name="joystick" type="joystick"/>
 </launch>
