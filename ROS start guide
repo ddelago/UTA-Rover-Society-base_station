@@ -1,0 +1,29 @@
+Steps to get Base Station and Odroid running with ROS
+
+Base Station:
+- Navigate to start_scripts directory for Base Staion
+- To SSH into odroid, use this script:
+sh odroid_ssh.sh
+- In new terminal, start base station controls:
+sh start_base_station.sh
+
+Odroid: 
+- Navigate to start_scripts directory for Odroid
+- Start roscore and Arduino communications:
+sh start_roscore_and_roscoms.sh
+
+ - Start GPS: 
+   rosrun nmea_navsat_driver nmea_serial_driver _port:=/dev/ttyACM# _baud:=38400
+   ON BASESTATION: rosrun random_gps_publisher gps_publisher
+ - Start IMU:
+   rosrun myahrs_driver myahrs_driver _port:=/dev/ttyACM#    OR
+   roslaunch myahrs_driver myahrs_driver.launch
+ - Start Cameras:
+   rosrun rqt_example_cpp opencv_test 0
+ - rosrun serial_communication serial_communication.py
+
+On Base Station:
+ - Start rqt and run gps and Rviz for IMU 
+ - NOTE: When you try to zoom in on the gps on OpenStreetMap View, It zooms out if you zoom in too far,
+   Just keep zooming back in after it zooms out and it will work after a few trys
+
