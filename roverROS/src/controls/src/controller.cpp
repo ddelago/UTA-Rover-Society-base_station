@@ -1,9 +1,9 @@
 /* 
  * Daniel Delago   11/25/2015 
  * Description: Creates node "controller" that takes values from the controller 
- * and publishes the edited values to multiple topics.
+ * and publishes the edited values to multiple topics. USES A PS4 CONTROLLER!
  * 
- * Node: controller
+ * Node: controls
  * Subscriptions: controller_raw
  * Publishing Topics: controls_input
 */
@@ -68,10 +68,8 @@ void Controls::controls_input(const sensor_msgs::Joy::ConstPtr& joy)
 
     /*-*-*-*-* Arm *-*-*-*-*/
 
-	//ADD SHOULDER ROTATION
-
 	//Right stick left & right
-    float shoulder_rotation;
+    float shoulder_rotation  = -1.0 * joy->axes[2];;
 	//Left stick up & down
     float shoulder_extension = joy->axes[1];			
 	//Right stick up & down

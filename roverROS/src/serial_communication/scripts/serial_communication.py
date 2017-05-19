@@ -87,7 +87,7 @@ def Drive(msg):
 		"""
 		#If current = previous value, do not update value. Prevents flooding of system
 		global shoulder_rotation_prev, shoulder_extension_prev, elbow_extension_prev, wrist_extension_prev, gripperState_prev, wrist_rotation_prev
-		shoulder_rotation = -1*int(round(100*msg.data[12]))		#-1 to 1, Right Stick left/right									
+		shoulder_rotation = int(round(100*msg.data[12]))		#-1 to 1, Right Stick left/right									
 		shoulder_extension = -1*int(round(100*msg.data[0]))   	#-1 to 1, Left Stick up/down
 		elbow_extension = -1*int(round(100*msg.data[1]))		#-1 to 1, Right Stick
 		wrist_extension = msg.data[2]							#-1, 0, or 1, D-pad up/down
