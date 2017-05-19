@@ -1,6 +1,5 @@
 Steps to get Base Station and Odroid running with ROS
 
-Base Station:
 - Navigate to start_scripts directory for Base Staion
 - To SSH into odroid, use this script:
 sh odroid_ssh.sh
