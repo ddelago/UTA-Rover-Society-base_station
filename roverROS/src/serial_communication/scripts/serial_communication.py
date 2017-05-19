@@ -8,12 +8,24 @@ ser.baudrate = 9600
 from geometry_msgs.msg import Twist
 from std_msgs.msg import Float32MultiArray
 from std_msgs.msg import String
-system = 0
 
 def Drive_auto(msg):
 	rospy.loginfo(rospy.get_caller_id() + "Autonomy is sending: %s",msg.data)
 	ser.write(msg.data.encode())
-	
+
+#Global Variables: 
+system = 0
+shoulder_rotation_prev = 0.0							
+shoulder_extension_prev = 0.0
+elbow_extension_prev = 0.0
+wrist_extension_prev = 0.0
+gripperState_prev = 0.0
+wrist_rotation_prev = 0.0
+sar_position_prev = 0.0
+drill_position_prev = 0.0
+spin_drill_prev = 0.0
+move_tray_prev = 0.0
+move_probe_prev = 0.0
 def Drive(msg):
 	"""
 	Control System:
@@ -53,7 +65,7 @@ def Drive(msg):
 			int_linear=-80
 		
 		#Formatting serial output string
-		output = "DRV" +":" + int_linear + "," + int_angular + "\n"
+		output = "DRV" +":" + str(int_linear) + "," + str(int_angular)
 		ser.write(output.encode())
 		
 		#Print to Base Station terminal
@@ -73,6 +85,8 @@ def Drive(msg):
 		5: Wrist Rotation
 		6: Gripper Open/Close
 		"""
+		#If current = previous value, do not update value. Prevents flooding of system
+		global shoulder_rotation_prev, shoulder_extension_prev, elbow_extension_prev, wrist_extension_prev, gripperState_prev, wrist_rotation_prev
 		shoulder_rotation = -1*int(round(100*msg.data[12]))		#-1 to 1, Right Stick left/right									
 		shoulder_extension = -1*int(round(100*msg.data[0]))   	#-1 to 1, Left Stick up/down
 		elbow_extension = -1*int(round(100*msg.data[1]))		#-1 to 1, Right Stick
@@ -97,36 +111,51 @@ def Drive(msg):
 		elif(wrist_rotation == 0):
 			wrist_rotation = 0
 
+		Arm = ""
 		#Formatting serial output string
-		output = "A" +"," + "1" + "," + shoulder_rotation
-		ser.write(output.encode())
-		Arm = output
+		if(shoulder_rotation != shoulder_rotation_prev):
+			output = "ARM:" + "1" + "," + str(shoulder_rotation) + " "
+			ser.write(output.encode())
+			shoulder_rotation_prev = shoulder_rotation
+			Arm += output
 
-		output = "A" +"," + "2" + "," + shoulder_extension
-		ser.write(output.encode())
-		Arm += output
+		if(shoulder_extension != shoulder_extension_prev):
+			output = "ARM:" + "2" + "," + str(shoulder_extension) + " "
+			ser.write(output.encode())
+			shoulder_extension_prev = shoulder_extension
+			Arm += output
 
-		output = "A" +"," + "3" + "," + elbow_extension
-		ser.write(output.encode())
-		Arm += output	
+		if(elbow_extension != elbow_extension_prev):		
+			output = "ARM:" + "3" + "," + str(elbow_extension) + " "
+			ser.write(output.encode())
+			elbow_extension_prev = elbow_extension
+			Arm += output	
 
-		output = "A" +"," + "4" + "," + wrist_extension
-		ser.write(output.encode())
-		Arm += output		
+		if(wrist_extension != wrist_extension_prev):
+			output = "ARM:" + "4" + "," + str(wrist_extension) + " "
+			ser.write(output.encode())
+			wrist_extension_prev = wrist_extension
+			Arm += output		
 
-		output = "A" +"," + "5" + "," + wrist_rotation
-		ser.write(output.encode())
-		Arm += output
+		if(wrist_rotation != wrist_rotation_prev):
+			output = "ARM:" + "5" + "," + str(wrist_rotation) + " "
+			ser.write(output.encode())
+			wrist_rotation_prev = wrist_rotation
+			Arm += output
 		
-		output = "A" +"," + "6" + "," + gripperState
-		ser.write(output.encode())
-		Arm += output
+		if(gripperState != gripperState_prev):
+			output = "ARM:" + "6" + "," + str(gripperState) + " "
+			ser.write(output.encode())
+			gripperState_prev = gripperState
+			Arm += output
 		
 		#Print to Base Station terminal
 		print(Arm)		
 		
 	#Sample Return
 	elif(system==2):
+		#If current = previous value, do not update value. Prevents flooding of system
+		global sar_position_prev, drill_position_prev, spin_drill_prev, move_tray_prev, move_probe_prev
 		sar_position = int(round(100*(msg.data[0])))	#Left stick
 		drill_position = int(round(100*(msg.data[1])))	#Right stick
 		spin_drill = int(round(100*(msg.data[5])))		#R2
@@ -148,26 +177,37 @@ def Drive(msg):
 		elif(move_probe == 0):
 			move_probe = "0"
 
+		SR=""
 		#Formatting serial output string
-		output = "R" +"," + "1" + "," + sar_position
-		ser.write(output.encode())
-		SR = output
+		if(sar_position != sar_position_prev):
+			output = "SAR:" + "1" + "," + str(sar_position) + " "
+			ser.write(output.encode())
+			sar_position_prev = sar_position
+			SR += output
 
-		output = "R" +"," + "2" + "," + drill_position
-		ser.write(output.encode())
-		SR += output
+		if(drill_position != drill_position_prev):
+			output = "SAR:" + "2" + "," + str(drill_position) + " "
+			ser.write(output.encode())
+			drill_position_prev = drill_position
+			SR += output
 
-		output = "R" +"," + "3" + "," + spin_drill
-		ser.write(output.encode())
-		SR += output
+		if(spin_drill != spin_drill_prev):
+			output = "SAR:" + "3" + "," + str(spin_drill) + " "
+			ser.write(output.encode())
+			spin_drill_prev = spin_drill
+			SR += output
 
-		output = "R" +"," + "4" + "," + move_tray
-		ser.write(output.encode())
-		SR += output
+		if(move_tray != move_tray_prev):
+			output = "SAR:" + "4" + "," + str(move_tray) + " "
+			ser.write(output.encode())
+			move_tray_prev = move_tray
+			SR += output
 
-		output = "R" +"," + "5" + "," + move_probe
-		ser.write(output.encode())
-		SR += output
+		if(move_probe != move_probe_prev):
+			output = "SAR:" + "5" + "," + str(move_probe) + " "
+			ser.write(output.encode())
+			move_probe_prev = move_probe
+			SR += output
 
 		#Print to Base Station terminal
 		print(SR)
