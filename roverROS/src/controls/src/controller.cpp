@@ -158,7 +158,7 @@ int main(int argc, char **argv)
     Controls controls;   
 	
 	//Publishes x times per second
-    ros::Rate loop_rate(3);			
+    ros::Rate loop_rate(6);			
     while(ros::ok()){
         ros::spinOnce();
         loop_rate.sleep();

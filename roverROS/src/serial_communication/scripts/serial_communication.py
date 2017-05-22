@@ -2,7 +2,7 @@
 import rospy
 import serial
 import time
-ser = serial.Serial('/dev/ttyACM0')
+ser = serial.Serial('/dev/ttyUSB0')
 
 ser.baudrate = 9600
 from geometry_msgs.msg import Twist
@@ -65,7 +65,7 @@ def Drive(msg):
 			int_linear=-80
 		
 		#Formatting serial output string
-		output = "DRV" +":" + str(int_linear) + "," + str(int_angular)
+		output = "DRV" +":" + str(int_linear) + "," + str(int_angular) + "\n"
 		ser.write(output.encode())
 		
 		#Print to Base Station terminal
@@ -87,9 +87,9 @@ def Drive(msg):
 		"""
 		#If current = previous value, do not update value. Prevents flooding of system
 		global shoulder_rotation_prev, shoulder_extension_prev, elbow_extension_prev, wrist_extension_prev, gripperState_prev, wrist_rotation_prev
-		shoulder_rotation = int(round(100*msg.data[12]))		#-1 to 1, Right Stick left/right									
-		shoulder_extension = -1*int(round(100*msg.data[0]))   	#-1 to 1, Left Stick up/down
-		elbow_extension = -1*int(round(100*msg.data[1]))		#-1 to 1, Right Stick
+		shoulder_rotation = int(round(75*msg.data[12]))		#-1 to 1, Right Stick left/right									
+		shoulder_extension = -1*int(round(75*msg.data[0]))   	#-1 to 1, Left Stick up/down
+		elbow_extension = -1*int(round(75*msg.data[1]))		#-1 to 1, Right Stick
 		wrist_extension = msg.data[2]							#-1, 0, or 1, D-pad up/down
 		gripperOpen = int(round(-100*(msg.data[4])))			#L2
 		gripperClose = int(round(100*(msg.data[5])))			#R2
@@ -98,53 +98,53 @@ def Drive(msg):
 		
 		#Max values
 		if(wrist_extension == 1):
-			wrist_extension = -75
+			wrist_extension = -40
 		elif(wrist_extension == -1):
-			wrist_extension = 75
+			wrist_extension = 40
 		elif(wrist_extension == 0):
 			wrist_extension = 0
 
 		if(wrist_rotation == 1):
-			wrist_rotation = -85
+			wrist_rotation = -40
 		elif(wrist_rotation == -1):
-			wrist_rotation = 85
+			wrist_rotation = 40
 		elif(wrist_rotation == 0):
 			wrist_rotation = 0
 
 		Arm = ""
 		#Formatting serial output string
 		if(shoulder_rotation != shoulder_rotation_prev):
-			output = "ARM:" + "1" + "," + str(shoulder_rotation) + " "
+			output = "ARM:" + "1" + "," + str(shoulder_rotation) + "\n"
 			ser.write(output.encode())
 			shoulder_rotation_prev = shoulder_rotation
 			Arm += output
 
 		if(shoulder_extension != shoulder_extension_prev):
-			output = "ARM:" + "2" + "," + str(shoulder_extension) + " "
+			output = "ARM:" + "2" + "," + str(shoulder_extension) + "\n"
 			ser.write(output.encode())
 			shoulder_extension_prev = shoulder_extension
 			Arm += output
 
 		if(elbow_extension != elbow_extension_prev):		
-			output = "ARM:" + "3" + "," + str(elbow_extension) + " "
+			output = "ARM:" + "3" + "," + str(elbow_extension) + "\n"
 			ser.write(output.encode())
 			elbow_extension_prev = elbow_extension
 			Arm += output	
 
 		if(wrist_extension != wrist_extension_prev):
-			output = "ARM:" + "4" + "," + str(wrist_extension) + " "
+			output = "ARM:" + "4" + "," + str(wrist_extension) + "\n"
 			ser.write(output.encode())
 			wrist_extension_prev = wrist_extension
 			Arm += output		
 
 		if(wrist_rotation != wrist_rotation_prev):
-			output = "ARM:" + "5" + "," + str(wrist_rotation) + " "
+			output = "ARM:" + "5" + "," + str(wrist_rotation) + "\n"
 			ser.write(output.encode())
 			wrist_rotation_prev = wrist_rotation
 			Arm += output
 		
 		if(gripperState != gripperState_prev):
-			output = "ARM:" + "6" + "," + str(gripperState) + " "
+			output = "ARM:" + "6" + "," + str(gripperState) + "\n"
 			ser.write(output.encode())
 			gripperState_prev = gripperState
 			Arm += output
@@ -180,31 +180,31 @@ def Drive(msg):
 		SR=""
 		#Formatting serial output string
 		if(sar_position != sar_position_prev):
-			output = "SAR:" + "1" + "," + str(sar_position) + " "
+			output = "SAR:" + "1" + "," + str(sar_position) + "\n"
 			ser.write(output.encode())
 			sar_position_prev = sar_position
 			SR += output
 
 		if(drill_position != drill_position_prev):
-			output = "SAR:" + "2" + "," + str(drill_position) + " "
+			output = "SAR:" + "2" + "," + str(drill_position) + "\n"
 			ser.write(output.encode())
 			drill_position_prev = drill_position
 			SR += output
 
 		if(spin_drill != spin_drill_prev):
-			output = "SAR:" + "3" + "," + str(spin_drill) + " "
+			output = "SAR:" + "3" + "," + str(spin_drill) + "\n"
 			ser.write(output.encode())
 			spin_drill_prev = spin_drill
 			SR += output
 
 		if(move_tray != move_tray_prev):
-			output = "SAR:" + "4" + "," + str(move_tray) + " "
+			output = "SAR:" + "4" + "," + str(move_tray) + "\n"
 			ser.write(output.encode())
 			move_tray_prev = move_tray
 			SR += output
 
 		if(move_probe != move_probe_prev):
-			output = "SAR:" + "5" + "," + str(move_probe) + " "
+			output = "SAR:" + "5" + "," + str(move_probe) + "\n"
 			ser.write(output.encode())
 			move_probe_prev = move_probe
 			SR += output
