@@ -2,25 +2,6 @@ Steps to get Base Station and Odroid running with ROS
 
 On Base Station:
 - Navigate to start_scripts directory for Base Staion
-<<<<<<< HEAD
-- To SSH into odroid, use this script:
-sh odroid_ssh.sh
-- In new terminal, start base station controls:
-sh start_base_station.sh
-
-Odroid: 
-- run: rosrun serial_communication serial_communication.py
-
- - Start GPS: 
-   rosrun nmea_navsat_driver nmea_serial_driver _port:=/dev/ttyACM# _baud:=38400
-   ON BASESTATION: rosrun random_gps_publisher gps_publisher
- - Start IMU:
-   rosrun myahrs_driver myahrs_driver _port:=/dev/ttyACM#    OR
-   roslaunch myahrs_driver myahrs_driver.launch
- - Start Cameras:
-   rosrun rqt_example_cpp opencv_test 0
- - rosrun serial_communication serial_communication.py
-=======
 - To SSH into odroid, use this script: sh odroid_ssh.sh
 
 On Odroid:
@@ -31,7 +12,6 @@ On Base Station:
 
 On Odroid:
 - Start sending commands to Arduino: rosrun serial_communication serial_communication.py
->>>>>>> 5c42808f422ffe7c52b0d7d14070f561c49cc7c0
 
 
 *-*-* Starting Sensors *-*-*
