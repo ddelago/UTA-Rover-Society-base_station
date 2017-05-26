@@ -48,8 +48,8 @@ def Drive(msg):
 	if(system==0):
 		#soft_max is the maximum speed that the rover will move using only the triggers. (Without X pressed)
 		soft_max = 50 							
-		linear = round(soft_max*(msg.data[7]))
-		angular = round(soft_max*(msg.data[8]))
+		linear = -1*round(soft_max*(msg.data[7]))
+		angular = round(100*(msg.data[8]))
 		int_linear = int(float(linear))
 		int_angular = int(float(angular))
 		
@@ -90,26 +90,18 @@ def Drive(msg):
 		shoulder_rotation = int(round(75*msg.data[12]))		#-1 to 1, Right Stick left/right									
 		shoulder_extension = -1*int(round(75*msg.data[0]))   	#-1 to 1, Left Stick up/down
 		elbow_extension = -1*int(round(75*msg.data[1]))		#-1 to 1, Right Stick
-		wrist_extension = msg.data[2]							#-1, 0, or 1, D-pad up/down
-		gripperOpen = int(round(-100*(msg.data[4])))			#L2
-		gripperClose = int(round(100*(msg.data[5])))			#R2
+		wrist_extension = msg.data[2]				#-1, 0, or 1, D-pad up/down
+		gripperOpen = int(round(-100*(msg.data[4])))		#L2
+		gripperClose = int(round(100*(msg.data[5])))		#R2
 		gripperState =  gripperOpen + gripperClose
-		wrist_rotation = msg.data[3]      						#-1, 0, or 1, D-pad left/right
+		wrist_rotation = int(round(30*msg.data[8])) 
 		
-		#Max values
-		if(wrist_extension == 1):
-			wrist_extension = -40
-		elif(wrist_extension == -1):
-			wrist_extension = 40
-		elif(wrist_extension == 0):
+		#If D-pad down is pressed, right stick controls wrist extension
+		if(wrist_extension == -1):
+			wrist_extension = elbow_extension
+			elbow_extension = 0
+		if(wrist_extension == -1):
 			wrist_extension = 0
-
-		if(wrist_rotation == 1):
-			wrist_rotation = -40
-		elif(wrist_rotation == -1):
-			wrist_rotation = 40
-		elif(wrist_rotation == 0):
-			wrist_rotation = 0
 
 		Arm = ""
 		#Formatting serial output string
