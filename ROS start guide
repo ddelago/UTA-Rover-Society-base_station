@@ -7,9 +7,7 @@ sh odroid_ssh.sh
 sh start_base_station.sh
 
 Odroid: 
-- Navigate to start_scripts directory for Odroid
-- Start roscore and Arduino communications:
-sh start_roscore_and_roscoms.sh
+- run: rosrun serial_communication serial_communication.py
 
  - Start GPS: 
    rosrun nmea_navsat_driver nmea_serial_driver _port:=/dev/ttyACM# _baud:=38400
