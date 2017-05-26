@@ -1,0 +1,6 @@
+Create new ethernet connection in network manager:
+Under IPv4 settings: 
+set addr to 192.168.10.10
+Mask to 255.255.255.0
+Gateway to 192.168.10.1
+Save
